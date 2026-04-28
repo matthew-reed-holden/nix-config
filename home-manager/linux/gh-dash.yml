@@ -1,0 +1,22 @@
+# gh-dash config — see https://dlvhdr.github.io/gh-dash/configuration/configuration
+#
+# Only the `theme:` block is set here; prSections, issuesSections,
+# keybindings, and defaults inherit gh-dash's built-in defaults. Theme
+# mirrors catppuccin/gh-dash mocha/mauve — matches our lazygit accent.
+
+theme:
+  colors:
+    text:
+      primary: "#cdd6f4"
+      secondary: "#cba6f7"
+      inverted: "#11111b"
+      faint: "#bac2de"
+      warning: "#f9e2af"
+      success: "#a6e3a1"
+      error: "#f38ba8"
+    background:
+      selected: "#313244"
+    border:
+      primary: "#cba6f7"
+      secondary: "#45475a"
+      faint: "#313244"

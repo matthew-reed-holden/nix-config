@@ -1,0 +1,9 @@
+# bat config — flags in CLI form, one per line.
+# https://github.com/sharkdp/bat#configuration-file
+#
+# Theme file at ~/.config/bat/themes/ lands via xdg.configFile. bat
+# needs `bat cache --build` after a theme is added before the name
+# resolves — handled by a home-manager activation hook in default.nix.
+
+--style="plain"
+--theme="Catppuccin Mocha"

@@ -1,0 +1,129 @@
+# Packages required to bring a fresh machine up to shadowfax-parity.
+# Installed via `yay -S --needed --noconfirm` (see justfile), which
+# routes official-repo packages through pacman and AUR packages through
+# makepkg — preferring pacman whenever a package is available there.
+# AUR-only packages are marked inline.
+#
+# Edit this file when the home-manager config starts referencing a new
+# binary, or when you adopt a new user-space application. `just up` is
+# idempotent, so declaring more than you have installed is fine; yay's
+# --needed flag skips anything already present.
+
+
+# ─── Shells ──────────────────────────────────────────────
+# Core zsh runtime + plugins sourced from .zshrc.
+zsh
+bash-completion
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+
+# ─── Terminal + prompt ───────────────────────────────────
+ghostty
+starship
+
+
+# ─── Node.js versioning (sourced from .zshrc) ────────────
+nvm
+
+
+# ─── Git + SSH (commit signing via ssh-keygen) ───────────
+git
+openssh
+
+
+# ─── 1Password (SSH agent + CLI credential helper) ───────
+1password            # AUR
+1password-cli        # AUR
+
+
+# ─── Status bar + click/hover dependencies ──────────────
+waybar
+pavucontrol
+networkmanager
+btop
+
+
+# ─── NVIDIA driver stack ─────────────────────────────────
+# Matches the standard `linux` kernel. If you swap kernels, switch to
+# the -dkms / -lts / -zen variant. nvidia-inst is EndeavourOS's helper
+# that sets up mkinitcpio hooks + modprobe config — declaring the
+# package does not re-run it; /etc state is separate and out-of-scope
+# for this list.
+nvidia-open
+nvidia-utils
+lib32-nvidia-utils
+nvidia-settings
+nvidia-inst
+
+
+# ─── Development ─────────────────────────────────────────
+docker
+docker-buildx
+docker-compose
+lazydocker
+go
+go-tools
+gopls
+delve
+neovim
+zed
+github-cli
+lazygit
+
+
+# ─── Applications ────────────────────────────────────────
+firefox
+brave-bin            # AUR (prebuilt)
+blender
+
+# ─── Productivity ────────────────────────────────────────
+linear-cli
+
+
+# ─── Gaming ──────────────────────────────────────────────
+# Needs `multilib` enabled in /etc/pacman.conf for 32-bit libraries.
+steam
+steamcmd             # AUR
+
+
+# ─── System info / utilities ─────────────────────────────
+fastfetch
+htop
+glances
+inxi
+duf
+tldr
+brightnessctl
+
+
+# ─── Shell daily drivers ─────────────────────────────────
+bat
+ripgrep
+fd
+vivid                # generates themed LS_COLORS (catppuccin-mocha)
+eza                  # modern ls replacement
+zoxide               # frecency-aware cd replacement (cd / cdi)
+fzf                  # fuzzy finder (Ctrl+R, Ctrl+T, Alt+C)
+zsh-history-substring-search   # Up/Down arrows search history by prefix
+gh                   # GitHub CLI
+diffnav              # TUI git diff pager (replaces `less` for git diff)
+ttf-work-sans        # AUR — Zed UI font
+jq                   # JSON processor / filter
+
+# ─── Docker credential helper (KWallet / libsecret) ──────
+kwallet
+kwalletmanager
+docker-credential-secretservice  # AUR — bridges docker login to KWallet
+
+
+# ─── Windows USB creator (AUR, rarely-used) ──────────────
+woeusb-ng            # AUR
+
+
+# ─── Build tooling (yay needs base-devel for AUR builds) ─
+base-devel
+
+
+# ─── Fonts (the nerd-fonts meta pulls every variant) ─────
+nerd-fonts

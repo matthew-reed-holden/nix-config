@@ -15,6 +15,12 @@
 [tag]
   gpgsign = true
 
+[core]
+  # diffnav — TUI diff pager with delta syntax highlighting + file
+  # tree. Only used when stdout is a TTY, so scripts and CI still get
+  # plain output. https://github.com/dlvhdr/diffnav
+  pager = diffnav
+
 [init]
   defaultBranch = main
 
@@ -32,3 +38,15 @@
 
 [merge]
   conflictstyle = zdiff3
+
+# SSH for pushes, HTTPS stays for fetches/clones.
+#
+# Why pushInsteadOf (not insteadOf): tools like lazy.nvim clone 50+
+# plugin repos in parallel. With plain insteadOf, every clone is
+# rewritten to git@github.com: and hits the 1Password SSH agent,
+# which refuses signatures under high concurrency on Linux. With
+# pushInsteadOf, clones stay https:// (no auth needed for public
+# repos) and only pushes route through the SSH agent. Private-repo
+# clones need to use the git@github.com: URL directly.
+[url "git@github.com:"]
+  pushInsteadOf = https://github.com/

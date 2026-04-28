@@ -1,0 +1,60 @@
+/* Waybar styling — Step 1: scaffolding + clock module.
+ *
+ * GTK3 CSS (waybar is currently GTK3). Selectors:
+ *   window#waybar   — the root bar window
+ *   #<module-id>    — a module (e.g. #clock, #battery)
+ *   .modules-left   — the left module group container
+ *
+ * Catppuccin Mocha color variables come from mocha.css (@import below).
+ * Reference: @base, @mantle, @surface0, @text, etc.
+ */
+
+@import "mocha.css";
+
+/* Reset GTK defaults so module styles are predictable.
+ *
+ * Font stack: Nerd Font first (for module icons), monospace fallback. The
+ * system has RecMonoLinear, M+1, NotoSansM, BlexMono, NotoSans Nerd Fonts
+ * via pacman; I'm picking NotoSansM Nerd Font Mono because Mono variants
+ * handle icon widths more predictably than Propo variants. */
+* {
+    font-family: "NotoSansM Nerd Font Mono", monospace;
+    font-size: 13px;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+/* Bar root: transparent so individual module backgrounds carry the look. */
+window#waybar {
+    background-color: transparent;
+    color: @text;
+}
+
+/* Shared pill style for every visible module. Each module id is listed so
+ * the selector is specific — GTK3 CSS doesn't support class-like grouping
+ * across ids cleanly. */
+#clock,
+#cpu,
+#memory,
+#network,
+#pulseaudio,
+#tray {
+    background-color: @surface0;
+    color: @text;
+    padding: 0 12px;
+    margin: 4px 3px;
+    border-radius: 8px;
+}
+
+/* Tighter outer margins for the first (center) and last (tray) pills
+ * so the bar's edges don't look lopsided. */
+#clock      { margin: 4px 6px; }
+#tray       { margin: 4px 6px 4px 3px; }
+
+/* Per-module accent colors. Subtle tinting on the fg so modules are
+ * distinguishable at a glance without being noisy. */
+#cpu        { color: @green; }
+#memory     { color: @blue; }
+#network    { color: @sapphire; }
+#pulseaudio { color: @mauve; }

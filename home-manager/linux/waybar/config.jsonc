@@ -1,0 +1,90 @@
+// Waybar layout — Step 1: scaffolding + clock.
+//
+// Waybar reads config.jsonc from the same dir as style.css (usually
+// ~/.config/waybar/). Each "modules-*" array is an ordered list of
+// module names; a module can appear only in ONE array per bar.
+//
+// Additional modules (tray, battery, network, pulseaudio, hyprland)
+// land in later steps — left blank now so the clock is the only
+// thing that renders.
+{
+    "layer": "top",          // "top" / "bottom" / "background" layer-shell anchor.
+                             //   "top" draws above normal windows.
+    "position": "top",
+    "height": 30,
+    "spacing": 4,            // px between modules in the same group
+
+    // Keyboard-toggle auto-hide. "mode": "hide" enables SIGUSR1 as a
+    // visibility toggle; "start_hidden": true means waybar launches
+    // invisible. Bound to Meta+Shift+B via a Plasma global shortcut
+    // (System Settings -> Shortcuts -> Custom Shortcuts) that runs
+    // toggle-waybar.
+    "mode": "hide",
+    "start_hidden": true,
+
+    "modules-left":   [],
+    "modules-center": ["clock"],
+    "modules-right":  ["cpu", "memory", "network", "pulseaudio", "tray"],
+
+    // Module configs — per upstream docs: https://github.com/Alexays/Waybar/wiki
+    "clock": {
+        "format":         "{:%a %b %d  %H:%M}",
+        "tooltip-format": "<tt>{calendar}</tt>"
+    },
+
+    // CPU usage % averaged across all cores. Left-click opens btop for
+    // a live view with history graphs (requires pacman -S btop).
+    "cpu": {
+        "format":         " {usage}%",
+        "interval":       3,
+        "tooltip-format": "Average CPU usage across all cores: {usage}%\n(click for btop)",
+        "on-click":       "ghostty -e btop"
+    },
+
+    // RAM usage %. Tooltip spells out used/total so the figure is
+    // self-explanatory. Left-click opens btop (same caveat re: install).
+    "memory": {
+        "format":         " {percentage}%",
+        "interval":       3,
+        "tooltip-format": "RAM used: {used:0.1f} GiB / {total:0.1f} GiB ({percentage}%)\n(click for btop)",
+        "on-click":       "ghostty -e btop"
+    },
+
+    // Network state. format-<type> picks a string based on link status:
+    //   ethernet  - wired up
+    //   wifi      - wireless associated
+    //   linked    - wired plugged in but no IP
+    //   disconnected - no link / no IP on any interface
+    // Left-click opens nmtui for connection management.
+    "network": {
+        "format-ethernet":     " {ifname}",
+        "format-wifi":         " {essid} {signalStrength}%",
+        "format-linked":       " {ifname} (no IP)",
+        "format-disconnected": " offline",
+        "tooltip-format":      "{ifname}: {ipaddr}/{cidr}\n(click to manage connections)",
+        "on-click":            "ghostty -e nmtui",
+        "interval":            10
+    },
+
+    // Volume via PipeWire's PulseAudio compat. Left = open pavucontrol
+    // for device selection + per-app levels. Right = toggle mute
+    // (quick action). Scroll still adjusts volume ±2%. {desc} is the
+    // human-readable sink name (e.g. "Built-in Audio Analog Stereo").
+    "pulseaudio": {
+        "format":          " {volume}%",
+        "format-muted":    " muted",
+        "on-click":        "pavucontrol",
+        "on-click-right":  "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+        "on-scroll-up":    "pactl set-sink-volume @DEFAULT_SINK@ +2%",
+        "on-scroll-down":  "pactl set-sink-volume @DEFAULT_SINK@ -2%",
+        "scroll-step":     2,
+        "tooltip-format":  "Output: {desc}\nVolume: {volume}%\n(click: pavucontrol, right-click: mute)"
+    },
+
+    // System tray — shows SNI icons from apps (1Password, Discord, etc.).
+    // Sits rightmost so overflow pushes left.
+    "tray": {
+        "icon-size": 16,
+        "spacing":   8
+    }
+}
