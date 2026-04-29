@@ -44,6 +44,23 @@ networkmanager
 btop
 
 
+# ─── Hyprland compositor + ecosystem ─────────────────────
+hyprland
+hyprlauncher
+hyprpaper
+hypridle
+hyprlock
+hyprpolkitagent
+xdg-desktop-portal-hyprland
+qt6-wayland          # Qt apps (KDE family) under Wayland
+dunst                # notification daemon
+grim                 # screenshot capture
+slurp                # region selector for grim
+swappy               # screenshot annotation/edit GUI
+kitty                # terminal (Hyprland default; ghostty stays primary)
+dolphin              # file manager (KDE; carries over)
+
+
 # ─── NVIDIA driver stack ─────────────────────────────────
 # Matches the standard `linux` kernel. If you swap kernels, switch to
 # the -dkms / -lts / -zen variant. nvidia-inst is EndeavourOS's helper
@@ -115,6 +132,10 @@ jq                   # JSON processor / filter
 kwallet
 kwalletmanager
 docker-credential-secretservice  # AUR — bridges docker login to KWallet
+
+
+# ─── Supabase CLI ────────────────────────────────────────
+supabase-bin         # AUR (prebuilt) — official `supabase` package lags
 
 
 # ─── Windows USB creator (AUR, rarely-used) ──────────────

@@ -14,17 +14,37 @@
     "height": 30,
     "spacing": 4,            // px between modules in the same group
 
-    // Keyboard-toggle auto-hide. "mode": "hide" enables SIGUSR1 as a
-    // visibility toggle; "start_hidden": true means waybar launches
-    // invisible. Bound to Meta+Shift+B via a Plasma global shortcut
-    // (System Settings -> Shortcuts -> Custom Shortcuts) that runs
-    // toggle-waybar.
-    "mode": "hide",
-    "start_hidden": true,
+    // Default dock mode — always visible, reserves exclusive zone so
+    // Hyprland reflows windows around the bar. SIGUSR1 toggle still
+    // works if bound (see toggle-waybar script), but bar starts shown.
 
-    "modules-left":   [],
+    "modules-left":   ["hyprland/workspaces", "hyprland/window"],
     "modules-center": ["clock"],
     "modules-right":  ["cpu", "memory", "network", "pulseaudio", "tray"],
+
+    // Hyprland workspaces — round dot per workspace. Active = filled.
+    // Click jumps to that workspace. Auto-creates workspaces on demand.
+    "hyprland/workspaces": {
+        "format":           "{icon}",
+        "format-icons": {
+            "active":  "",
+            "default": "",
+            "urgent":  ""
+        },
+        "on-click":         "activate",
+        "all-outputs":      true,
+        "persistent-workspaces": {
+            "*": 5
+        }
+    },
+
+    // Active window title. separate-outputs scopes to current monitor
+    // when multi-display.
+    "hyprland/window": {
+        "format":          "{title}",
+        "max-length":      80,
+        "separate-outputs": true
+    },
 
     // Module configs — per upstream docs: https://github.com/Alexays/Waybar/wiki
     "clock": {

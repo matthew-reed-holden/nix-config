@@ -58,3 +58,35 @@ window#waybar {
 #memory     { color: @blue; }
 #network    { color: @sapphire; }
 #pulseaudio { color: @mauve; }
+
+/* Hyprland workspaces — pill container with one dot button per workspace.
+ * Active dot = mauve, inactive = surface2. Hover lightens. */
+#workspaces {
+    background-color: @surface0;
+    margin: 4px 6px;
+    padding: 0 6px;
+    border-radius: 8px;
+}
+#workspaces button {
+    color: @surface2;
+    padding: 0 4px;
+    background: transparent;
+    border-radius: 4px;
+}
+#workspaces button.active {
+    color: @mauve;
+}
+#workspaces button.urgent {
+    color: @red;
+}
+#workspaces button:hover {
+    background-color: @surface1;
+    color: @text;
+}
+
+/* Active window title. */
+#window {
+    color: @subtext1;
+    margin: 4px 3px;
+    padding: 0 12px;
+}
