@@ -1,0 +1,157 @@
+/*
+ * swaync style — M3-aliased Catppuccin Mocha defaults via fallback.css,
+ * overridden by matugen-generated colors.css when select-wallpaper.sh
+ * runs. References use M3 var names (primary / surface / on_surface /
+ * etc.) so the same style works under either palette source.
+ */
+
+@import "fallback.css";
+@import "colors.css";
+
+* {
+    font-family: "Work Sans", monospace;
+    font-size: 14px;
+}
+
+/* Notification center panel. */
+.control-center {
+    background-color: @background;
+    color: @on_surface;
+    border: 2px solid @primary;
+    border-radius: 12px;
+    padding: 8px;
+    margin: 4px;
+}
+
+.notification-row { background: transparent; }
+
+.notification {
+    background-color: @surface;
+    color: @on_surface;
+    border-radius: 8px;
+    margin: 4px 0;
+    padding: 8px;
+    border: 1px solid @outline_variant;
+}
+
+.notification.low      { border-color: @outline_variant; }
+.notification.normal   { border-color: @primary; }
+.notification.critical { border-color: @error; }
+
+.notification:hover { background-color: @surface_container_high; }
+
+.notification-content { padding: 4px; }
+
+.summary { font-weight: bold; color: @on_surface; }
+.body    { color: @on_surface_variant; }
+
+.close-button {
+    background: transparent;
+    color: @error;
+    border: none;
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.close-button:hover {
+    background-color: @error;
+    color: @on_error;
+}
+
+/* Floating toasts. */
+.floating-notifications .notification {
+    background-color: @background;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Title widget (header). */
+.widget-title {
+    color: @on_surface;
+    font-size: 1.2em;
+    padding: 8px;
+}
+.widget-title > button {
+    background-color: @surface_container_high;
+    color: @on_surface;
+    border: none;
+    border-radius: 8px;
+    padding: 4px 12px;
+}
+.widget-title > button:hover {
+    background-color: @primary;
+    color: @on_primary;
+}
+
+/* DND toggle. */
+.widget-dnd { color: @on_surface; padding: 8px; }
+.widget-dnd > switch          { background-color: @surface_container_high; }
+.widget-dnd > switch:checked  { background-color: @primary; }
+
+button.notification-default-action {
+    background: transparent;
+    color: inherit;
+    border: none;
+}
+
+/* MPRIS now-playing. */
+.widget-mpris {
+    color: @on_surface;
+    background-color: @surface;
+    padding: 8px;
+    margin: 4px 8px;
+    border-radius: 8px;
+}
+.widget-mpris-player { padding: 4px; }
+.widget-mpris-album-art { border-radius: 8px; margin-right: 8px; }
+.widget-mpris-title    { font-weight: bold; color: @on_surface; }
+.widget-mpris-subtitle { color: @on_surface_variant; font-size: 0.9em; }
+.widget-mpris > box > button {
+    background-color: transparent;
+    color: @primary;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+}
+.widget-mpris > box > button:hover { background-color: @surface_container_high; }
+
+/* Volume slider. */
+.widget-volume {
+    background-color: @surface;
+    color: @on_surface;
+    padding: 8px;
+    margin: 4px 8px;
+    border-radius: 8px;
+}
+.widget-volume > label { color: @primary; padding: 0 8px; }
+.widget-volume scale { min-height: 8px; }
+.widget-volume scale trough     { background-color: @surface_container_high; border-radius: 4px; min-height: 6px; }
+.widget-volume scale highlight  { background-color: @primary; border-radius: 4px; }
+.widget-volume scale slider     {
+    background-color: @on_surface;
+    border: 2px solid @primary;
+    border-radius: 50%;
+    min-width: 14px;
+    min-height: 14px;
+}
+
+/* Buttons-grid (power actions). */
+.widget-buttons-grid {
+    background-color: @surface;
+    padding: 8px;
+    margin: 4px 8px;
+    border-radius: 8px;
+}
+.widget-buttons-grid > flowbox > flowboxchild > button {
+    background-color: @surface_container_high;
+    color: @on_surface;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 4px;
+    font-size: 1.4em;
+    font-family: "Symbols Nerd Font Mono", monospace;
+}
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+    background-color: @primary;
+    color: @on_primary;
+}

@@ -1,0 +1,227 @@
+/*
+ * Rofi config — behavior cribbed from ML4W (modi, mode glyphs, mouse,
+ * window format), theme from catppuccin/rofi mocha. Skips ML4W-specific
+ * imports (rofi-font / rofi-border / current_wallpaper) so this is
+ * self-contained.
+ */
+
+configuration {
+    modi:                "drun,filebrowser,window,run";
+    font:                "Work Sans 11";
+    show-icons:          true;
+    icon-theme:          "Tela-circle-dracula";
+    drun-display-format: "{name}";
+
+    /* Mouse behavior. Single click selects row, double-click commits
+     * (rofi default). Don't rebind MousePrimary — already in use. */
+    hover-select:        false;
+
+    /* Window switcher format: workspace · class · title */
+    window-format:       "{w} · {c} · {t}";
+
+    /* Per-mode prompt glyphs (Nerd Font codepoints, FA set) */
+    display-drun:        "  ";
+    display-run:         "  ";
+    display-filebrowser: "  ";
+    display-window:      "  ";
+    display-keybinds:    "  ";
+}
+
+@import "~/.config/rofi/colors.rasi"
+@import "~/.cache/wallpaper/current.rasi"
+
+/* ─────────────────────────────────────────────────────────
+ *  Widget layout — ported from ML4W's rofi config.rasi.
+ *  Border / radius inlined (ML4W loads from
+ *  ~/.config/ml4w/settings/rofi-border*.rasi which we don't have).
+ *  background-image is omitted — wallpaper-driven theming is a later
+ *  phase.
+ * ───────────────────────────────────────────────────────── */
+
+* {
+    border-width:  2px;
+    border-radius: 12px;
+}
+
+window {
+    height:           35em;
+    width:            56em;
+    transparency:     "real";
+    fullscreen:       false;
+    enabled:          true;
+    cursor:           "default";
+    spacing:          0em;
+    padding:          0em;
+    border:           @border-width;
+    border-color:     @primary;
+    border-radius:    @border-radius;
+    background-color: @background;
+}
+
+mainbox {
+    enabled:          true;
+    spacing:          0em;
+    padding:          0em;
+    orientation:      horizontal;
+    children:         [ "imagebox", "listbox" ];
+    background-color: transparent;
+    background-image: @current-image;
+}
+
+imagebox {
+    padding:          20px;
+    background-color: transparent;
+    orientation:      vertical;
+    children:         [ "inputbar", "dummy", "mode-switcher" ];
+}
+
+dummy {
+    background-color: transparent;
+}
+
+/* ─── Mode switcher buttons ─── */
+mode-switcher {
+    orientation:      horizontal;
+    enabled:          true;
+    padding:          1.5em;
+    spacing:          1.5em;
+    background-color: transparent;
+}
+
+button {
+    /* Mode-switcher buttons use Nerd Font for the glyph prefixes set
+     * in the configuration block (display-drun, display-run, etc.).
+     * Work Sans (the default font) has no Nerd Font codepoints. */
+    font:             "Symbols Nerd Font Mono 16";
+    padding:          15px;
+    border-radius:    2em;
+    border:           0;
+    cursor:           pointer;
+    background-color: @background;
+    text-color:       @on-surface;
+}
+
+button selected {
+    font:             "Symbols Nerd Font Mono 16";
+    padding:          15px;
+    border-radius:    2em;
+    background-color: @surface;
+    text-color:       @on-surface;
+}
+
+/* ─── Inputbar ─── */
+inputbar {
+    enabled:          true;
+    margin:           1em;
+    children:         [ "textbox-prompt-colon", "entry" ];
+    border-radius:    2em;
+    background-color: @surface;
+}
+
+textbox-prompt-colon {
+    enabled:          true;
+    expand:           false;
+    /* Nerd Font search glyph — needs a Nerd Font, not Work Sans. */
+    font:             "Symbols Nerd Font Mono 16";
+    str:              "   ";
+    padding:          1em 0.3em 0 0;
+    text-color:       @on-surface;
+    background-color: transparent;
+}
+
+entry {
+    enabled:          true;
+    spacing:          1em;
+    padding:          1em;
+    text-color:       @on-surface;
+    cursor:           text;
+    placeholder:      "Search";
+    background-color: transparent;
+    placeholder-color: inherit;
+}
+
+/* ─── Lists ─── */
+listbox {
+    padding:          0em;
+    spacing:          0em;
+    orientation:      horizontal;
+    children:         [ "listview" ];
+    background-color: @background;
+}
+
+listview {
+    padding:          1.5em;
+    spacing:          0.5em;
+    enabled:          true;
+    columns:          1;
+    lines:            1;
+    cycle:            true;
+    dynamic:          true;
+    scrollbar:        false;
+    layout:           vertical;
+    reverse:          false;
+    fixed-height:     true;
+    fixed-columns:    true;
+    cursor:           "default";
+    background-color: transparent;
+    text-color:       @on-surface;
+}
+
+/* ─── Elements (list rows) ─── */
+element {
+    enabled:          true;
+    spacing:          10px;
+    padding:          0.5em;
+    cursor:           pointer;
+    background-color: transparent;
+    text-color:       @on-surface;
+}
+
+element selected.normal {
+    background-color: @surface;
+    text-color:       @on-surface;
+    border-radius:    1.5em;
+}
+
+element normal.normal,
+element normal.urgent,
+element normal.active,
+element selected.urgent,
+element selected.active,
+element alternate.normal,
+element alternate.urgent,
+element alternate.active {
+    background-color: inherit;
+    text-color:       @on-surface;
+}
+
+element-icon {
+    size:             3em;
+    cursor:           inherit;
+    background-color: transparent;
+    text-color:       inherit;
+    border-radius:    0em;
+}
+
+element-text {
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+    cursor:           inherit;
+    background-color: transparent;
+    text-color:       inherit;
+}
+
+/* ─── Error messages ─── */
+error-message {
+    text-color:       @on-surface;
+    background-color: @background;
+    text-transform:   capitalize;
+    children:         [ "textbox" ];
+}
+
+textbox {
+    text-color:       inherit;
+    background-color: inherit;
+    vertical-align:   0.5;
+    horizontal-align: 0.5;
+}

@@ -41,24 +41,121 @@ openssh
 waybar
 pavucontrol
 networkmanager
+network-manager-applet  # nm-applet tray indicator
 btop
+pacman-contrib       # provides `checkupdates` for waybar updates module
 
 
 # ─── Hyprland compositor + ecosystem ─────────────────────
 hyprland
-hyprlauncher
-hyprpaper
+uwsm                 # systemd-managed Hyprland session (logs → journalctl)
+rofi-wayland         # app launcher (Wayland-native rofi fork; ML4W default)
+awww                 # Wayland wallpaper daemon (renamed-from-swww; replaces hyprpaper which is broken on Hyprland 0.54+)
+imagemagick          # blur / square thumbnail generation for hyprlock
+matugen              # wallpaper-derived M3 color palette generator
+tesseract            # screen OCR engine (Super+Alt+O)
+tesseract-data-eng   # English OCR model
+bluez                # Bluetooth stack (waybar bluetooth module)
+bluez-utils          # bluetoothctl
+blueman              # Bluetooth GUI (clicked from waybar bluetooth)
+
+
+# ─── Theming bridges (Qt + legacy XWayland) ──────────────
+qt6ct                # Qt6 theme/icon control
+qt5ct                # Qt5 equivalent (still some apps)
+xsettingsd           # XSETTINGS daemon — XWayland apps inherit theme/cursor
+
+
+# ─── Power menu / dock / wallpaper alternatives ──────────
+wlogout              # full-screen power menu grid
+nwg-dock-hyprland    # AUR — macOS-style dock for Hyprland
+waypaper             # AUR — GUI wallpaper picker (alt to our rofi script)
+
+
+# ─── Bibata cursor theme (AUR) ───────────────────────────
+bibata-cursor-theme
+
+
+# ─── Communication ───────────────────────────────────────
+thunderbird
+discord
+slack-desktop        # AUR
+
+
+# ─── Notes ───────────────────────────────────────────────
+obsidian
+
+
+# ─── Image / vector / paint editing ──────────────────────
+gimp
+inkscape
+krita
+
+
+# ─── Image viewer (Wayland-native, vim-keys) ─────────────
+imv
+
+
+# ─── Screen recording / streaming ────────────────────────
+obs-studio
+
+
+# ─── File sync (peer-to-peer, no cloud) ──────────────────
+syncthing
+
+
+# ─── Backups (dedup, modern) ─────────────────────────────
+restic
+
+
+# ─── VPN (kernel WireGuard) ──────────────────────────────
+wireguard-tools
+
+
+# ─── Database GUI ────────────────────────────────────────
+dbeaver
+
+
+# ─── API testing (git-native collections) ────────────────
+bruno                # AUR
+
+
+# ─── Gaming extras ───────────────────────────────────────
+lutris               # non-Steam launcher
+gamemode             # CPU/GPU perf tuning
+mangohud             # FPS / resource overlay
+lib32-mangohud       # multilib — for 32-bit games
+lib32-gamemode       # multilib counterpart
+
+
+# ─── Disk usage TUI ──────────────────────────────────────
+gdu
+
+
+# ─── Wayland color picker (Hyprland-native, freezes screen) ──
+hyprpicker
+
+
+# ─── Archive support (for ark + extraction tools) ────────
+p7zip
+unrar
 hypridle
 hyprlock
+ttf-fira-sans        # used by hyprlock UI labels
 hyprpolkitagent
 xdg-desktop-portal-hyprland
 qt6-wayland          # Qt apps (KDE family) under Wayland
-dunst                # notification daemon
+swaync               # notification daemon (replaces dunst)
 grim                 # screenshot capture
 slurp                # region selector for grim
 swappy               # screenshot annotation/edit GUI
 kitty                # terminal (Hyprland default; ghostty stays primary)
 dolphin              # file manager (KDE; carries over)
+cliphist             # clipboard history backend (Super+V)
+tela-circle-icon-theme-git    # AUR — colored circle icons for rofi launcher
+wl-clipboard         # wl-copy / wl-paste used by cliphist + screenshots
+playerctl            # media key control
+kdeconnect           # phone integration (KDE Connect)
 
 
 # ─── NVIDIA driver stack ─────────────────────────────────
@@ -91,11 +188,35 @@ lazygit
 
 # ─── Applications ────────────────────────────────────────
 firefox
+firefox-developer-edition
 brave-bin            # AUR (prebuilt)
 blender
+onlyoffice-bin       # AUR — MS Office–compatible suite (Word/Excel/PowerPoint analogs)
+okular               # PDF viewer (Qt — picks up qt6ct theme)
 
 # ─── Productivity ────────────────────────────────────────
 linear-cli
+
+
+# ─── Secrets (sops-nix) ──────────────────────────────────
+# sops decrypts secrets/*.yaml at home-manager activation time;
+# age provides the asymmetric keypair used to encrypt entries.
+# One-time bootstrap on a new host:
+#   age-keygen -o ~/.config/sops/age/keys.txt
+#   # add public key to .sops.yaml as a new recipient
+#   sops updatekeys secrets/mcp.yaml
+sops
+age
+
+
+# ─── Music ───────────────────────────────────────────────
+# Spicetify patches Spotify's xpui.spa in place — needs
+# /opt/spotify to be user-writable. One-time post-install:
+#   sudo chmod a+wr /opt/spotify -R
+#   sudo chmod a+wr /opt/spotify/Apps -R
+#   spicetify backup apply
+spotify              # AUR
+spicetify-cli        # AUR
 
 
 # ─── Gaming ──────────────────────────────────────────────

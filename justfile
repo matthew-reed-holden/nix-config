@@ -36,5 +36,16 @@ install-deps:
 switch:
     nix run home-manager/release-25.11 -- switch --flake .#matthewholden@shadowfax
 
-# Full bootstrap: install packages, then activate.
-up: install-deps switch
+# Install pacman hooks under etc/pacman.d/hooks/ to /etc/pacman.d/hooks/.
+# Currently: spicetify.hook (re-applies theme after Spotify upgrades).
+# Idempotent — `install -m 644` overwrites cleanly.
+install-pacman-hooks:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for hook in etc/pacman.d/hooks/*.hook; do
+        echo "Installing $(basename "$hook")..."
+        sudo install -Dm644 "$hook" "/etc/pacman.d/hooks/$(basename "$hook")"
+    done
+
+# Full bootstrap: install packages, install pacman hooks, then activate.
+up: install-deps install-pacman-hooks switch

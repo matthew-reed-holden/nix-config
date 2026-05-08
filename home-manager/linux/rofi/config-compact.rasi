@@ -1,0 +1,155 @@
+/*
+ * Slim variant — single column, top-anchored, no imagebox/mode-switcher.
+ * Used for non-app pickers (cliphist, etc.) where the full launcher
+ * layout is overkill. Mirrors ML4W's config-compact.rasi structure.
+ */
+
+configuration {
+    modi:                "drun,filebrowser,window,run";
+    font:                "Work Sans 11";
+    show-icons:          true;
+    drun-display-format: "{name}";
+    hover-select:        false;
+    window-format:       "{w} · {c} · {t}";
+
+    display-drun:        "   ";
+    display-run:         "   ";
+    display-filebrowser: "   ";
+    display-window:      "   ";
+}
+
+@import "~/.config/rofi/colors.rasi"
+
+* {
+    border-width:  2px;
+    border-radius: 12px;
+}
+
+window {
+    width:            30em;
+    y-offset:         2em;
+    location:         north;
+    anchor:           north;
+    fullscreen:       false;
+    enabled:          true;
+    cursor:           "default";
+    transparency:     "real";
+    border:           @border-width;
+    border-color:     @primary;
+    border-radius:    @border-radius;
+    background-color: transparent;
+    spacing:          0em;
+    padding:          0em;
+    margin:           0em;
+}
+
+mainbox {
+    enabled:          true;
+    spacing:          0em;
+    padding:          0em;
+    orientation:      horizontal;
+    children:         [ "listbox" ];
+    background-color: transparent;
+}
+
+inputbar {
+    enabled:          true;
+    spacing:          0em;
+    padding:          1em;
+    children:         [ "textbox-prompt-colon", "entry" ];
+    background-color: @surface;
+}
+
+textbox-prompt-colon {
+    enabled:          true;
+    expand:           false;
+    font:             "Symbols Nerd Font Mono 16";
+    str:              "   ";
+    padding:          0.5em 0.2em 0em 0em;
+    text-color:       @on-surface;
+    border-radius:    2em 0em 0em 2em;
+    background-color: transparent;
+}
+
+entry {
+    enabled:           true;
+    spacing:           1em;
+    padding:           0.5em;
+    background-color:  @surface;
+    text-color:        @on-surface;
+    cursor:            text;
+    placeholder:       "Search";
+    placeholder-color: inherit;
+}
+
+listbox {
+    padding:          0em;
+    spacing:          0em;
+    orientation:      vertical;
+    children:         [ "inputbar", "listview", "message" ];
+    background-color: @background;
+}
+
+listview {
+    padding:          1em;
+    spacing:          0em;
+    margin:           0em;
+    enabled:          true;
+    columns:          1;
+    lines:            8;
+    cycle:            true;
+    dynamic:          true;
+    scrollbar:        false;
+    layout:           vertical;
+    reverse:          false;
+    fixed-height:     true;
+    fixed-columns:    true;
+    cursor:           "default";
+    background-color: transparent;
+    text-color:       @on-surface;
+}
+
+element {
+    enabled:          true;
+    padding:          1em;
+    margin:           0em;
+    cursor:           pointer;
+    background-color: transparent;
+    text-color:       @on-surface;
+    border-radius:    1.1em;
+}
+
+element selected.normal {
+    background-color: @surface;
+    text-color:       @on-surface;
+    border-radius:    1.5em;
+}
+
+element normal.normal,
+element normal.urgent,
+element normal.active,
+element selected.urgent,
+element selected.active,
+element alternate.normal,
+element alternate.urgent,
+element alternate.active {
+    background-color: inherit;
+    text-color:       @on-surface;
+}
+
+element-icon {
+    /* Compact variant hides icons — text only. */
+    size:             0em;
+    cursor:           inherit;
+    background-color: transparent;
+    text-color:       inherit;
+    content:          "";
+}
+
+element-text {
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+    cursor:           inherit;
+    background-color: transparent;
+    text-color:       inherit;
+}

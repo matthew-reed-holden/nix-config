@@ -1,0 +1,3 @@
+/* GTK 3 + 4 share this file. Imports the matugen-generated palette
+ * (colors.css), so GTK apps follow wallpaper-derived theming. */
+@import 'colors.css';

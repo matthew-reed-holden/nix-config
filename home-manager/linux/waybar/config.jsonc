@@ -18,18 +18,139 @@
     // Hyprland reflows windows around the bar. SIGUSR1 toggle still
     // works if bound (see toggle-waybar script), but bar starts shown.
 
-    "modules-left":   ["hyprland/workspaces", "hyprland/window"],
-    "modules-center": ["clock"],
-    "modules-right":  ["cpu", "memory", "network", "pulseaudio", "tray"],
+    "modules-left":   ["hyprland/window"],
+    "modules-center": ["hyprland/workspaces"],
+    "modules-right":  ["custom/weather", "group/hardware", "bluetooth", "network", "pulseaudio", "group/tools", "custom/updates", "custom/notification", "custom/exit", "tray", "clock"],
+
+    // ─── Hardware group: cpu (header) + memory (revealed on hover) ───
+    "group/hardware": {
+        "orientation": "inherit",
+        "drawer": {
+            "transition-duration":   300,
+            "children-class":        "not-cpu",
+            "transition-left-to-right": false
+        },
+        "modules": [ "cpu", "memory" ]
+    },
+
+    // ─── Tools group: chevron header + cliphist/wallpaper/themes/screenshot ───
+    "group/tools": {
+        "orientation": "inherit",
+        "drawer": {
+            "transition-duration":   300,
+            "children-class":        "not-tools",
+            "transition-left-to-right": false
+        },
+        "modules": [
+            "custom/tools",
+            "custom/cliphist",
+            "custom/wallpaper",
+            "custom/themeswitcher",
+            "custom/screenshot"
+        ]
+    },
+
+    "custom/tools": {
+        "format":         "",
+        "tooltip-format": "Tools",
+        "on-scroll-up":   "true",
+        "on-scroll-down": "true"
+    },
+
+    "custom/cliphist": {
+        "format":         "",
+        "on-click":       "cliphist list | rofi -dmenu -config ~/.config/rofi/config-cliphist.rasi | cliphist decode | wl-copy",
+        "tooltip-format": "Clipboard history (Super+V)"
+    },
+
+    "custom/wallpaper": {
+        "format":         "",
+        "on-click":       "~/.local/bin/select-wallpaper.sh",
+        "tooltip-format": "Wallpaper picker"
+    },
+
+    "custom/themeswitcher": {
+        "format":         "",
+        "on-click":       "~/.local/bin/select-flavor.sh",
+        "tooltip-format": "Theme / flavor"
+    },
+
+    "custom/screenshot": {
+        "format":         "",
+        "on-click":       "~/.local/bin/screenshot.sh",
+        "tooltip-format": "Screenshot menu"
+    },
+
+    "custom/weather": {
+        "format":         "{}",
+        "exec":           "curl -fs --max-time 4 'wttr.in/?format=%c+%t' || echo \"\"",
+        "interval":       1800,
+        "tooltip-format": "Weather (wttr.in)"
+    },
+
+    "bluetooth": {
+        "format":                              " {status}",
+        "format-disabled":                     "",
+        "format-off":                          "",
+        "format-no-controller":                "",
+        "interval":                            30,
+        "on-click":                            "blueman-manager",
+        "tooltip-format-connected":            "Connected: {num_connections}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected":  "{device_alias}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}\t| {device_battery_percentage}%"
+    },
+
+    // Pacman/AUR updates count via checkupdates (pacman-contrib).
+    //   Left  click → run yay -Syu in a ghostty terminal
+    //   Right click → preview pending package list
+    "custom/updates": {
+        "format":         "󰑐 {}",
+        "exec":           "checkupdates 2>/dev/null | wc -l",
+        "interval":       1800,
+        "tooltip-format": "Pacman / AUR updates pending\nLeft: install (yay -Syu)\nRight: list pending",
+        "on-click":       "ghostty -e bash -c 'yay -Syu --noconfirm; echo; read -p \"[enter]\"'",
+        "on-click-right": "ghostty -e bash -c 'checkupdates; echo; read -p \"[enter]\"'"
+    },
+
+    // swaync notification indicator. swaync-client -swb subscribes with
+    // both inhibit + count and emits JSON updates waybar consumes.
+    //   Left  click → toggle notification center
+    //   Right click → clear all notifications
+    "custom/notification": {
+        "format":      "{icon}",
+        "format-icons": {
+            "notification":         "󰪟",
+            "none":                 "󰦡",
+            "dnd-notification":     "󰦦",
+            "dnd-none":             "󰦦",
+            "inhibited-notification": "󰪟",
+            "inhibited-none":         "󰦡"
+        },
+        "return-type":    "json",
+        "exec":           "swaync-client -swb",
+        "on-click":       "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "tooltip-format": "Notifications\nLeft: toggle center\nRight: clear all"
+    },
+
+    // Power menu.
+    //   Left  click → rofi-driven dialog (lock/logout/suspend/reboot/poweroff)
+    //   Right click → lock immediately (skip dialog)
+    "custom/exit": {
+        "format":         "󰐥",
+        "on-click":       "~/.local/bin/power-menu.sh",
+        "on-click-right": "hyprlock",
+        "tooltip-format": "Power\nLeft: menu\nRight: lock"
+    },
 
     // Hyprland workspaces — round dot per workspace. Active = filled.
     // Click jumps to that workspace. Auto-creates workspaces on demand.
     "hyprland/workspaces": {
         "format":           "{icon}",
         "format-icons": {
-            "active":  "",
-            "default": "",
-            "urgent":  ""
+            "active":  "",
+            "default": "",
+            "urgent":  ""
         },
         "on-click":         "activate",
         "all-outputs":      true,
@@ -38,11 +159,14 @@
         }
     },
 
-    // Active window title. separate-outputs scopes to current monitor
-    // when multi-display.
+    // Active window title. icon: true pulls the app icon from its
+    // .desktop entry. separate-outputs scopes to current monitor when
+    // multi-display.
     "hyprland/window": {
-        "format":          "{title}",
-        "max-length":      80,
+        "format":           "{title}",
+        "icon":             true,
+        "icon-size":        18,
+        "max-length":       80,
         "separate-outputs": true
     },
 

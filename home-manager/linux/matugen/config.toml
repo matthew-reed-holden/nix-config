@@ -1,0 +1,39 @@
+# matugen — generate Material Design 3 color palettes from current
+# wallpaper, write themed config files for each registered template.
+# Invoked by select-wallpaper.sh after `awww img`.
+#
+# Phase 4a: rofi only. Add waybar / swaync templates in 4b / 4c.
+
+[config]
+
+[templates.rofi]
+input_path  = '~/.config/matugen/templates/rofi-colors.rasi'
+# Write to themes/dynamic.rasi, NOT directly to colors.rasi. The
+# flavor switcher (select-flavor.sh) treats this as one of its
+# options — wallpaper change updates the file but doesn't auto-apply
+# unless the user picks "Dynamic" in the menu.
+output_path = '~/.config/rofi/themes/dynamic.rasi'
+
+[templates.waybar]
+input_path  = '~/.config/matugen/templates/colors.css'
+# Waybar style.css @imports this and references @primary, @surface,
+# etc. post_hook reloads waybar so colors apply immediately.
+output_path = '~/.config/waybar/colors.css'
+post_hook   = 'pkill waybar; sleep 0.3 && uwsm app -- waybar &'
+
+[templates.swaync]
+input_path  = '~/.config/matugen/templates/colors.css'
+output_path = '~/.config/swaync/colors.css'
+post_hook   = 'swaync-client --reload-css'
+
+[templates.gtk3]
+input_path  = '~/.config/matugen/templates/gtk-colors.css'
+output_path = '~/.config/gtk-3.0/colors.css'
+
+[templates.gtk4]
+input_path  = '~/.config/matugen/templates/gtk-colors.css'
+output_path = '~/.config/gtk-4.0/colors.css'
+
+[templates.btop]
+input_path  = '~/.config/matugen/templates/btop.theme'
+output_path = '~/.config/btop/themes/matugen.theme'

@@ -1,22 +1,15 @@
-/* Waybar styling — Step 1: scaffolding + clock module.
+/*
+ * Waybar style — Catppuccin Mocha defaults via mocha.css for fresh
+ * machines, then overridden by matugen-generated colors.css when
+ * select-wallpaper.sh runs (writes to ~/.config/waybar/colors.css).
  *
- * GTK3 CSS (waybar is currently GTK3). Selectors:
- *   window#waybar   — the root bar window
- *   #<module-id>    — a module (e.g. #clock, #battery)
- *   .modules-left   — the left module group container
- *
- * Catppuccin Mocha color variables come from mocha.css (@import below).
- * Reference: @base, @mantle, @surface0, @text, etc.
+ * Module references use M3 names (primary, surface, on-surface, etc.)
+ * so the same style.css works under either palette source.
  */
 
 @import "mocha.css";
+@import "colors.css";
 
-/* Reset GTK defaults so module styles are predictable.
- *
- * Font stack: Nerd Font first (for module icons), monospace fallback. The
- * system has RecMonoLinear, M+1, NotoSansM, BlexMono, NotoSans Nerd Fonts
- * via pacman; I'm picking NotoSansM Nerd Font Mono because Mono variants
- * handle icon widths more predictably than Propo variants. */
 * {
     font-family: "NotoSansM Nerd Font Mono", monospace;
     font-size: 13px;
@@ -25,68 +18,108 @@
     min-height: 0;
 }
 
-/* Bar root: transparent so individual module backgrounds carry the look. */
 window#waybar {
     background-color: transparent;
-    color: @text;
+    color: @on_surface;
 }
 
-/* Shared pill style for every visible module. Each module id is listed so
- * the selector is specific — GTK3 CSS doesn't support class-like grouping
- * across ids cleanly. */
+/* Shared pill style for every visible module. */
 #clock,
 #cpu,
 #memory,
 #network,
 #pulseaudio,
 #tray {
-    background-color: @surface0;
-    color: @text;
+    background-color: @surface;
+    color: @on_surface;
     padding: 0 12px;
     margin: 4px 3px;
     border-radius: 8px;
 }
 
-/* Tighter outer margins for the first (center) and last (tray) pills
- * so the bar's edges don't look lopsided. */
-#clock      { margin: 4px 6px; }
-#tray       { margin: 4px 6px 4px 3px; }
+#clock { margin: 4px 6px; }
+#tray  { margin: 4px 6px 4px 3px; }
 
-/* Per-module accent colors. Subtle tinting on the fg so modules are
- * distinguishable at a glance without being noisy. */
-#cpu        { color: @green; }
-#memory     { color: @blue; }
-#network    { color: @sapphire; }
-#pulseaudio { color: @mauve; }
+/* Per-module accents via M3 secondary / tertiary. */
+#cpu        { color: @tertiary; }
+#memory     { color: @primary; }
+#network    { color: @secondary; }
+#pulseaudio { color: @primary; }
 
-/* Hyprland workspaces — pill container with one dot button per workspace.
- * Active dot = mauve, inactive = surface2. Hover lightens. */
+/* Custom modules. */
+#custom-updates,
+#custom-notification,
+#custom-exit {
+    background-color: @surface;
+    color: @on_surface;
+    padding: 0 12px;
+    margin: 4px 3px;
+    border-radius: 8px;
+}
+#custom-updates      { color: @tertiary; }
+#custom-notification { color: @secondary; }
+#custom-exit         { color: @error; }
+#custom-exit:hover   { background-color: @error; color: @on_error; }
+
+/* Hyprland workspaces — pill of dots, primary when active. */
 #workspaces {
-    background-color: @surface0;
+    background-color: @surface;
     margin: 4px 6px;
     padding: 0 6px;
     border-radius: 8px;
 }
 #workspaces button {
-    color: @surface2;
+    color: @outline;
     padding: 0 4px;
     background: transparent;
     border-radius: 4px;
 }
 #workspaces button.active {
-    color: @mauve;
+    color: @primary;
 }
 #workspaces button.urgent {
-    color: @red;
+    color: @error;
 }
 #workspaces button:hover {
-    background-color: @surface1;
-    color: @text;
+    background-color: @surface_container_high;
+    color: @on_surface;
 }
 
 /* Active window title. */
 #window {
-    color: @subtext1;
-    margin: 4px 3px;
+    background-color: @surface;
+    color: @on_surface;
+    margin: 4px 6px;
+    padding: 0 14px;
+    border-radius: 8px;
+}
+
+/* New custom modules — share pill style. */
+#bluetooth,
+#custom-weather,
+#custom-tools,
+#custom-cliphist,
+#custom-wallpaper,
+#custom-themeswitcher,
+#custom-screenshot {
+    background-color: @surface;
+    color: @on_surface;
     padding: 0 12px;
+    margin: 4px 3px;
+    border-radius: 8px;
+}
+#bluetooth        { color: @blue; }
+#custom-weather   { color: @sky; }
+#custom-tools     { color: @primary; }
+#custom-cliphist,
+#custom-wallpaper,
+#custom-themeswitcher,
+#custom-screenshot { color: @secondary; }
+
+/* Group containers — drawer reveals siblings on hover. */
+#group-hardware,
+#group-tools {
+    background: transparent;
+    padding: 0;
+    margin: 0;
 }

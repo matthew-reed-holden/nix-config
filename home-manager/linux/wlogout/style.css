@@ -1,0 +1,39 @@
+/* wlogout — power menu grid. Catppuccin Mocha defaults; matugen
+ * could template a colors.css later if you want wallpaper-derived. */
+
+* {
+    background-image: none;
+    box-shadow: none;
+    font-family: "Work Sans", monospace;
+    font-size: 16px;
+}
+
+window {
+    background-color: rgba(30, 30, 46, 0.85);   /* base + transparent */
+}
+
+button {
+    color: #cdd6f4;                              /* text */
+    background-color: rgba(49, 50, 68, 0.5);     /* surface0 */
+    border-style: solid;
+    border-width: 2px;
+    border-color: #45475a;                       /* surface1 */
+    border-radius: 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+    margin: 12px;
+}
+
+button:focus, button:active, button:hover {
+    background-color: #cba6f7;                   /* mauve */
+    color: #11111b;                              /* crust */
+    border-color: #cba6f7;
+    outline-style: none;
+}
+
+#lock     { background-image: image(url("icons/lock.png")); }
+#logout   { background-image: image(url("icons/logout.png")); }
+#suspend  { background-image: image(url("icons/suspend.png")); }
+#reboot   { background-image: image(url("icons/reboot.png")); }
+#shutdown { background-image: image(url("icons/shutdown.png")); }
