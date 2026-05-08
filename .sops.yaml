@@ -1,7 +1,9 @@
 keys:
   - &user_holdem3 age16em7ljc0ravdn4cadam3phqlvgm48mz55v0xhgz9e6mh3ng6ks2qeekj36
+  - &matthewholden_shadowfax age107ytphppwrrg76w455x4qc076d5jn2n78a9qa9edkk20fdgh3qaq2xg2p4
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env)$
     key_groups:
       - age:
-        - *user_holdem3
+          - *user_holdem3
+          - *matthewholden_shadowfax
