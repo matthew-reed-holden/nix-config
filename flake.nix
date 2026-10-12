@@ -38,7 +38,7 @@
     nixos-needsreboot.url = "https://flakehub.com/f/wimpysworld/nixos-needsreboot/0.2.5.tar.gz";
     nixos-needsreboot.inputs.nixpkgs.follows = "nixpkgs";
 
-    catppuccin.url = "github:catppuccin/nix";
+    catppuccin.url = "github:catppuccin/nix/release-25.11";
     catppuccin.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     disko.url = "https://flakehub.com/f/nix-community/disko/1.11.0.tar.gz";
