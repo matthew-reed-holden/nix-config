@@ -148,6 +148,7 @@ exercism             # AUR — exercism.io CLI
 
 # ─── Databases ───────────────────────────────────────────
 postgresql           # extra — server + client
+pg_cron              # AUR — in-database cron; firecrawl's job queue needs it
 dolt                 # extra — git-style versioned SQL DB
 
 

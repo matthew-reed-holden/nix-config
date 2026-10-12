@@ -1,6 +1,6 @@
 # Lazygit config — Catppuccin Mocha (mauve accent).
 # Theme block mirrors https://github.com/catppuccin/lazygit/blob/main/themes/mocha/mauve.yml
-# and is nested under `gui:` which is where lazygit expects theme + authorColors.
+# and is nested under `gui:` which is where lazygit expects theme (authorColors lives inside theme).
 
 gui:
   theme:
@@ -29,5 +29,5 @@ gui:
       - '#f38ba8'
     defaultFgColor:
       - '#cdd6f4'
-  authorColors:
-    '*': '#b4befe'
+    authorColors:
+      '*': '#b4befe'

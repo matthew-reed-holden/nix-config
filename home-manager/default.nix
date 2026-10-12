@@ -25,6 +25,9 @@ in
     inputs.sops-nix.homeManagerModules.sops
   ];
 
+  # sops-nix master needs go >= 1.26; stable nixpkgs ships 1.25. Drop once stable catches up.
+  sops.package = (import inputs.sops-nix { pkgs = pkgs.unstable; }).sops-install-secrets;
+
   catppuccin = {
     inherit (catppuccinPalette) accent;
     inherit (catppuccinPalette) flavor;

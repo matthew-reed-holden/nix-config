@@ -7,6 +7,7 @@
   config,
   inputs,
   lib,
+  pkgs,
   stateVersion,
   ...
 }:
@@ -24,6 +25,12 @@
       "$HOME/.local/bin"
       # `go install` drops binaries in $GOPATH/bin (default ~/go/bin).
       "$HOME/go/bin"
+      # LM Studio ships its `lms` CLI here (installed by the app itself).
+      "$HOME/.lmstudio/bin"
+      # pnpm 11 puts `pnpm i -g` binaries here and refuses to install
+      # until it's on PATH ("pnpm setup" can't help — it wants to write
+      # .zshrc, which home-manager owns).
+      "$HOME/.local/share/pnpm/bin"
     ];
     # Point SSH (and ssh-keygen, used by git for SSH commit signing) at
     # the 1Password agent socket. Without this set, git -S / ssh-add
@@ -62,6 +69,14 @@
     case ":$PATH:" in
       *":$HOME/go/bin:"*) ;;
       *) export PATH="$HOME/go/bin:$PATH" ;;
+    esac
+    case ":$PATH:" in
+      *":$HOME/.lmstudio/bin:"*) ;;
+      *) export PATH="$HOME/.lmstudio/bin:$PATH" ;;
+    esac
+    case ":$PATH:" in
+      *":$HOME/.local/share/pnpm/bin:"*) ;;
+      *) export PATH="$HOME/.local/share/pnpm/bin:$PATH" ;;
     esac
   '';
 
@@ -163,6 +178,8 @@
     # the sops-decrypted paths into env vars for any shell tool that
     # reads them.
     [ -f "$HOME/.zshrc.mcp-secrets" ] && source "$HOME/.zshrc.mcp-secrets"
+    # Agent telemetry -> local OTel stack (agent-baseline/observability).
+    [ -f "$HOME/code/agent-baseline/observability/env.sh" ] && source "$HOME/code/agent-baseline/observability/env.sh"
 
     # zoxide — must be initialized LAST (zoxide doctor exits 144
     # otherwise). Plugins above wrap zle widgets / touch chpwd hooks,
@@ -430,7 +447,15 @@
 
   # qt6ct + xsettingsd + fastfetch + wlogout configs.
   xdg.configFile."qt6ct/qt6ct.conf".source        = ./qt6ct/qt6ct.conf;
-  xdg.configFile."xsettingsd/xsettingsd.conf".source = ./xsettingsd/xsettingsd.conf;
+  # force: kde-gtk-config's kded module rewrites this file (and drops a
+  # .backup beside it) on every Plasma login — plasma-desktop is installed
+  # alongside Hyprland here. Without force, the next `just switch` after
+  # any Plasma session aborts on "would be clobbered". Only our Hyprland
+  # session actually runs xsettingsd, so we win the file unconditionally.
+  xdg.configFile."xsettingsd/xsettingsd.conf" = {
+    source = ./xsettingsd/xsettingsd.conf;
+    force = true;
+  };
   xdg.configFile."fastfetch/config.jsonc".source  = ./fastfetch/config.jsonc;
   xdg.configFile."wlogout/layout".source          = ./wlogout/layout;
   xdg.configFile."wlogout/style.css".source       = ./wlogout/style.css;
@@ -598,58 +623,45 @@ home.file.".local/bin/select-flavor.sh" = {
   # After bootstrap, each `home-manager switch` decrypts the secrets to
   # /run/user/$UID/secrets/<name> (mode 400, tmpfs, gone on reboot).
   sops = {
+    # sops-nix master needs go >= 1.26; stable nixpkgs ships 1.25. Drop once stable catches up.
+    package =
+      (import inputs.sops-nix {
+        pkgs = inputs.nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+      }).sops-install-secrets;
     age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
     defaultSopsFile = ../../secrets/mcp.yaml;
     defaultSopsFormat = "yaml";
 
     secrets = {
-      CONTEXT7_API_KEY = { };
       FIRECRAWL_API_KEY = { };
       GITHUB_PERSONAL_ACCESS_TOKEN = { };
-      JINA_API_KEY = { };
+      THEOSTACK_MCP_TOKEN = { };
     };
   };
 
   # ── Claude Code MCP servers ──────────────────────────────────────────
-  # Claude Code is installed via npm (~/.local/bin/claude); only its
-  # config is managed here. ~/.claude.json is mutable (Claude rewrites
-  # session/state keys on every launch), so a Nix-store symlink would
-  # break it. Instead, jq-merge the `mcpServers` key — same pattern as
-  # dockerCredsStore above.
+  # Claude Code is installed via its native installer (~/.local/bin/claude);
+  # only its config is managed here. ~/.claude.json is mutable (Claude
+  # rewrites session/state keys on every launch), so a Nix-store symlink
+  # would break it. Instead, jq-merge the user-scope `mcpServers` key.
   #
-  # Tokens are inlined from sops at activation time. ~/.claude.json is
-  # already chmod 600. Skipped: mcp-nixos (Python/Nix-only; not on AUR)
-  # — add later via uvx or nix store path if needed.
+  # Only cross-project servers live here. Project servers (theostack API,
+  # postgres, stripe, sentry, storybook, …) belong in each repo's tracked
+  # .mcp.json. Secrets are NOT inlined: Claude expands ''${VAR} at spawn
+  # time from the shell environment, which .zshrc.mcp-secrets provides.
   #
-  # `command = "npx"` resolves via PATH at MCP-server spawn time. Claude
-  # inherits PATH from the shell that launched it, so npm/nvm/node must
-  # be on PATH (already wired in .zshrc above).
+  # `command = "npx"` resolves via PATH at MCP-server spawn time.
   home.activation.claudeMcpConfig =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       if [ -f "$HOME/.claude.json" ] && [ -x /usr/bin/jq ]; then
-        ctx7=$(cat ${config.sops.secrets.CONTEXT7_API_KEY.path} 2>/dev/null || echo "")
-        firecrawl=$(cat ${config.sops.secrets.FIRECRAWL_API_KEY.path} 2>/dev/null || echo "")
-        ghpat=$(cat ${config.sops.secrets.GITHUB_PERSONAL_ACCESS_TOKEN.path} 2>/dev/null || echo "")
-        jina=$(cat ${config.sops.secrets.JINA_API_KEY.path} 2>/dev/null || echo "")
-
         tmp=$(mktemp)
         /usr/bin/jq \
-          --arg ctx7 "$ctx7" \
-          --arg firecrawl "$firecrawl" \
-          --arg ghpat "$ghpat" \
-          --arg jina "$jina" \
           '.mcpServers = {
-            cloudflare:           { type: "sse",  url: "https://docs.mcp.cloudflare.com/mcp" },
-            exa:                  { type: "sse",  url: "https://mcp.exa.ai/mcp" },
-            "next-devtools":      { type: "stdio", command: "npx", args: ["-y", "next-devtools-mcp@latest"] },
-            "chrome-devtools":    { type: "stdio", command: "npx", args: ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"] },
-            playwright:           { type: "stdio", command: "npx", args: ["-y", "@playwright/mcp@latest"] },
-            "sequential-thinking":{ type: "stdio", command: "npx", args: ["-y", "@modelcontextprotocol/server-sequential-thinking"] },
-            postgres:             { type: "stdio", command: "npx", args: ["-y", "@modelcontextprotocol/server-postgres"], env: { POSTGRES_CONNECTION_STRING: (env.POSTGRES_CONNECTION_STRING // "") } },
-            github:               { type: "stdio", command: "npx", args: ["-y", "@modelcontextprotocol/server-github"], env: { GITHUB_PERSONAL_ACCESS_TOKEN: $ghpat } },
-            firecrawl:            { type: "stdio", command: "npx", args: ["-y", "firecrawl-mcp"], env: { FIRECRAWL_API_KEY: $firecrawl } },
-            context7:             { type: "sse",  url: "https://mcp.context7.com/mcp", headers: { Authorization: ("Bearer " + $ctx7) } },
-            jina:                 { type: "sse",  url: "https://mcp.jina.ai/v1?exclude_tools=deduplicate_strings,expand_query,parallel_search_arxiv,parallel_search_ssrn,parallel_search_web,show_api_key,search_arxiv,search_jina_blog,search_ssrn,search_web", headers: { Authorization: ("Bearer " + $jina) } }
+            "chrome-devtools": { type: "stdio", command: "npx", args: ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"] },
+            playwright:        { type: "stdio", command: "npx", args: ["-y", "@playwright/mcp@latest"] },
+            github:            { type: "stdio", command: "npx", args: ["-y", "@modelcontextprotocol/server-github"], env: { GITHUB_PERSONAL_ACCESS_TOKEN: "''${GITHUB_PERSONAL_ACCESS_TOKEN}" } },
+            firecrawl:         { type: "stdio", command: "npx", args: ["-y", "firecrawl-mcp"], env: { FIRECRAWL_API_URL: "http://localhost:3002" } },
+            grafana:           { type: "http", url: "http://localhost:8000/mcp" }
           }' \
           "$HOME/.claude.json" > "$tmp" \
           && mv "$tmp" "$HOME/.claude.json" \
@@ -661,9 +673,8 @@ home.file.".local/bin/select-flavor.sh" = {
   # them outside Claude Code. Sourced from sops paths each shell start;
   # silently empty if sops hasn't decrypted yet (fresh-machine pre-bootstrap).
   home.file.".zshrc.mcp-secrets".text = ''
-    export CONTEXT7_API_KEY=$(cat ${config.sops.secrets.CONTEXT7_API_KEY.path} 2>/dev/null || echo "")
     export FIRECRAWL_API_KEY=$(cat ${config.sops.secrets.FIRECRAWL_API_KEY.path} 2>/dev/null || echo "")
     export GITHUB_PERSONAL_ACCESS_TOKEN=$(cat ${config.sops.secrets.GITHUB_PERSONAL_ACCESS_TOKEN.path} 2>/dev/null || echo "")
-    export JINA_API_KEY=$(cat ${config.sops.secrets.JINA_API_KEY.path} 2>/dev/null || echo "")
+    export THEOSTACK_MCP_TOKEN=$(cat ${config.sops.secrets.THEOSTACK_MCP_TOKEN.path} 2>/dev/null || echo "")
   '';
 }
